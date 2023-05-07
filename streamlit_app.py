@@ -47,7 +47,7 @@ else:
     url = st.text_input("URL del sitio web:", "https://uuki.live/")
     question = st.text_input("Pregunta:")
 
-    llm = ChatOpenAI(temperature=1.0)
+    llm = ChatOpenAI(temperature=1.0, openai_api_key=api_key)
     query_website_tool = WebpageQATool(qa_chain=load_qa_with_sources_chain(llm))
 
     @st.cache(suppress_st_warning=True, allow_output_mutation=True)
