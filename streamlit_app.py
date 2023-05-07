@@ -21,7 +21,7 @@ class WebpageQATool(BaseTool):
     text_splitter: RecursiveCharacterTextSplitter = Field(default_factory=_get_text_splitter)
     qa_chain: BaseCombineDocumentsChain
 
-    def _run(self, question: str, url: str) -> str:  # Cambio hecho aquí
+    def _run(self, question: str, url: str) -> str:
         result = trafilatura.extract(trafilatura.fetch_url(url))
         docs = [Document(page_content=result, metadata={"source": url})]
         web_docs = self.text_splitter.split_documents(docs)
@@ -50,9 +50,9 @@ else:
     llm = ChatOpenAI(temperature=1.0, openai_api_key=api_key)
     query_website_tool = WebpageQATool(qa_chain=load_qa_with_sources_chain(llm))
 
-    @st.cache(suppress_st_warning=True, allow_output_mutation=True)
+    # Función run_tool modificada sin @st.cache
     def run_tool(url: str, question: str):
-        return query_website_tool.run(question, url)  # Cambio hecho aquí
+        return query_website_tool.run(question, url)
 
     if url and question:
         answer = run_tool(url, question)
