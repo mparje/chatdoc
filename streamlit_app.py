@@ -52,8 +52,9 @@ else:
 
     # Función run_tool modificada sin @st.cache
     def run_tool(url: str, question: str):
-        return query_website_tool.run(question, url)
+        return query_website_tool.run(url, question)
+
 
     if url and question:
-        answer = run_tool(url, question)
+        answer = run_tool(question, url)
         st.write("Respuesta:", answer)
