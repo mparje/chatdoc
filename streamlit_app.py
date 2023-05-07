@@ -21,7 +21,7 @@ class WebpageQATool(BaseTool):
     text_splitter: RecursiveCharacterTextSplitter = Field(default_factory=_get_text_splitter)
     qa_chain: BaseCombineDocumentsChain
 
-    def _run(self, question: str, url: str) -> str:
+    def _run(self, url: str, question: str) -> str:  # Cambio realizado aquí
         result = trafilatura.extract(trafilatura.fetch_url(url))
         docs = [Document(page_content=result, metadata={"source": url})]
         web_docs = self.text_splitter.split_documents(docs)
@@ -52,8 +52,9 @@ else:
 
     @st.cache(suppress_st_warning=True, allow_output_mutation=True)
     def run_tool(url: str, question: str):
-        return query_website_tool.run(question, url)
+        return query_website_tool.run(url, question)
 
     if url and question:
         answer = run_tool(url, question)
         st.write("Respuesta:", answer)
+
