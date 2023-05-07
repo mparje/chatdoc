@@ -6,6 +6,7 @@ from langchain.chains.qa_with_sources.loading import load_qa_with_sources_chain,
 from langchain.chat_models import ChatOpenAI
 import os, asyncio, trafilatura
 from langchain.docstore.document import Document
+import openai
 
 def _get_text_splitter():
     return RecursiveCharacterTextSplitter(
@@ -38,16 +39,21 @@ class WebpageQATool(BaseTool):
 # Streamlit app
 st.title("Consulta en sitio web")
 
-url = st.text_input("URL del sitio web:", "https://uuki.live/")
-question = st.text_input("Pregunta:")
+api_key = st.sidebar.text_input("Introduce tu clave de API de OpenAI", type="password")
+if not api_key:
+    st.warning("Por favor, introduce una clave de API válida para continuar.")
+else:
+    openai.api_key = api_key
+    url = st.text_input("URL del sitio web:", "https://uuki.live/")
+    question = st.text_input("Pregunta:")
 
-llm = ChatOpenAI(temperature=1.0)
-query_website_tool = WebpageQATool(qa_chain=load_qa_with_sources_chain(llm))
+    llm = ChatOpenAI(temperature=1.0)
+    query_website_tool = WebpageQATool(qa_chain=load_qa_with_sources_chain(llm))
 
-@st.cache(suppress_st_warning=True, allow_output_mutation=True)
-def run_tool(url: str, question: str):
-    return query_website_tool.run(question, url)
+    @st.cache(suppress_st_warning=True, allow_output_mutation=True)
+    def run_tool(url: str, question: str):
+        return query_website_tool.run(question, url)
 
-if url and question:
-    answer = run_tool(url, question)
-    st.write("Respuesta:", answer)
+    if url and question:
+        answer = run_tool(url, question)
+        st.write("Respuesta:", answer)
